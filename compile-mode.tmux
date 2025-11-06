@@ -31,16 +31,16 @@ tmux set-environment -g TMUX_COMPILE_HISTORY "$history_file"
 tmux bind-key "$key" run-shell "$CURRENT_DIR/scripts/compile.sh"
 
 # Bind recompile (C-c C-r) to run last command
-tmux bind-key "C-c C-r" run-shell "$CURRENT_DIR/scripts/recompile.sh"
+tmux bind-key "C-b C-r" run-shell "$CURRENT_DIR/scripts/recompile.sh"
 
 # Bind to close compile pane (C-c C-k)
-tmux bind-key "C-c C-k" run-shell "$CURRENT_DIR/scripts/kill-compile.sh"
+tmux bind-key "C-b C-k" run-shell "$CURRENT_DIR/scripts/kill-compile.sh"
 
 # Bind to focus compile pane and enter copy mode (C-c C-o)
-tmux bind-key "C-c C-o" run-shell "$CURRENT_DIR/scripts/focus-compile.sh"
+tmux bind-key "C-b C-o" run-shell "$CURRENT_DIR/scripts/focus-compile.sh"
 
 # Bind to jump to next error (C-c C-n)
-tmux bind-key "C-c C-n" run-shell "$CURRENT_DIR/scripts/next-error.sh"
+tmux bind-key "C-b C-n" run-shell "$CURRENT_DIR/scripts/next-error.sh"
 
 # In copy-mode in compile pane, bind Enter to jump to error in Neovim
 tmux bind-key -T copy-mode-vi "Enter" run-shell "$CURRENT_DIR/scripts/jump-to-error.sh"
