@@ -26,6 +26,8 @@ if [ -z "$cursor_y" ]; then
   tmux send -X cancel 2>/dev/null || true
   exit 0
 fi
+scroll_pos=$(tmux display-message -p -t "$current_pane" '#{scroll_position}')
+cursor_y=$((cursor_y - scroll_pos))
 
 # Capture the single line under the copy-mode cursor
 line_text=$(tmux capture-pane -p -J -t "$current_pane" -S "$cursor_y" -E "$cursor_y" 2>/dev/null || echo "")
