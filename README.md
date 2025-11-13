@@ -1,6 +1,9 @@
-# tmux-compile
-
-**Seamless compilation workflows from inside tmux**
+<p align="center">
+  <img src="assets/tmux-compile.png" alt="tmux-compile logo" width="100%"/>
+</p>
+<p align="center">
+    <b>Seamless compilation workflows from inside tmux</b>
+</p>
 
 `tmux-compile` is inspired by Emacs’ compile-mode: it runs build commands in a dedicated pane, keeps a history of previous commands and lets you jump straight to errors in your editor. The goal is to simplify repetitive compilation tasks without pulling you out of your terminal or editor.
 
@@ -59,9 +62,9 @@ By default the plugin defines a few keybindings. You can change them under **Con
 
 | Action               | Default keybinding |
 |---------------------|--------------------|
-| Run compile command   | `<prefix> b`       |
-| Re-run last command | `<prefix> r`       |
-| Kill compile pane   | `<prefix> k`       |
+| Run compile command   | `<prefix> C-b`       |
+| Re-run last command | `<prefix> C-r`       |
+| Kill compile pane   | `<prefix> C-k`       |
 | Open file at error  | `Enter` in copy-mode |
 
 When you first trigger the compile pane you will be prompted for a shell command. After execution the command is stored in the history so you can re-run it quickly. While viewing the output in copy-mode, pressing **Enter** on a line that looks like `file:line:col` (or `file:line`) opens that file at the specified location in Neovim. Neovim must be running in another pane for this feature to work.
