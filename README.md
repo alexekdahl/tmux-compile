@@ -49,6 +49,11 @@ run-shell ~/.tmux/plugins/tmux-comnpile/compile-mode.tmux
 
 When you trigger the compile command, you'll be prompted to enter a compilation command. Press Enter to execute it.
 
+### Command History
+
+By default, `tmux-compile` stores all compile commands in a single history file:
+Enabling session-aware mode creates one history file per tmux session. Each file is named after the tmux session (for example, $COMPILE_HISTORY_DIR/my-session.history). Use @compile-mode-history-dir to change the directory.
+
 ### Error Navigation
 
 When viewing compile output in copy-mode:
@@ -76,6 +81,12 @@ set -g @compile-mode-height "25%"
 
 # Set custom history file location
 set -g @compile-mode-history-file "$HOME/.compile-history"
+
+# Enable history file per session
+set -g @compile-mode-session-history 'on'
+
+# Set custom base directory for history files for history per session
+set -g @compile-mode-history-dir "$HOME/.compile-history-dir"
 
 # Change the file open keybinding (in copy-mode)
 set -g @compile-mode-open-file-key "o"

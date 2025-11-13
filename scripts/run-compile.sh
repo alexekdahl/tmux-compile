@@ -14,7 +14,8 @@ fi
 
 # Read configuration from tmux environment
 height="${TMUX_COMPILE_HEIGHT:-30%}"
-history_file="${TMUX_COMPILE_HISTORY:-$HOME/.tmux-compile-history}"
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+history_file="$("$CURRENT_DIR/get-history-file.sh")"
 
 # Persist command to history for reuse via recompile script
 mkdir -p "$(dirname "$history_file")" 2>/dev/null
