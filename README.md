@@ -1,103 +1,113 @@
 # tmux-compile
-A tmux plugin inspired by Emacs' compile-mode, bringing seamless compilation workflows to your terminal. Designed to be simple and straightforward, yet packed with practical features for efficient development.
 
-## Why compile-mode.tmux?
-Like Emacs compile-mode, you don't have to leave your editor or tmux session. Trigger compilations, navigate errors directly to Neovim, and maintain your workflow without context switching. 
-It strikes a balance between simplicity and functionality—no bloat, no unnecessary complexity.
+**Seamless compilation workflows from inside tmux**
+
+`tmux-compile` is inspired by Emacs’ compile-mode: it runs build commands in a dedicated pane, keeps a history of previous commands and lets you jump straight to errors in your editor. The goal is to simplify repetitive compilation tasks without pulling you out of your terminal or editor.
+
+## Why use tmux-compile?
+
+Modern terminal workflows often juggle editors, build scripts and error messages. `tmux-compile` keeps everything together:
+
+- **Stay in tmux** – run compilations without spawning external windows or switching panes manually.
+- **Smart error jumping** – if Neovim is running in an adjacent pane, you can jump directly to the file and line reported by your compiler. No more copying file paths.
+- **Minimal friction** – choose your own keybindings and pane height; history is persisted per session or globally.
+- **Inspired by compile-mode** – familiar to users of Emacs, but adapted to the tmux + Neovim workflow.
 
 ## Features
 
-- Run compilation commands in a separate tmux pane with a single keybinding
-- Automatically save and recall previous compile commands
-- Parse compiler errors and navigate directly to source files in Neovim
-- Customizable pane height and keybindings
-- Syntax-highlighted output with timestamps
+- **Dedicated compile pane** – open a separate pane for running arbitrary shell commands.
+- **Persistent history** – saves each compile command you run; optionally one history file per tmux session.
+- **Error parsing and navigation** – detects errors of the form `file:line:col` or `file:line` and opens the file in Neovim.
+- **Configurable** – choose keybindings for triggering, re-running or killing the compile pane; adjust the pane height and history location.
+- **Timestamped, syntax-highlighted output** – makes it easier to follow long build outputs.
+
+## Requirements
+
+- **tmux ≥ 2.0**
+- **Neovim** (only needed for the error navigation feature)
+- **bash**
 
 ## Installation
 
-### Using tpm (Tmux Plugin Manager)
+### With tpm
 
-Add this line to your `tmux.conf`:
+Add the plugin to your `tmux.conf`:
 
 ```tmux
 set -g @plugin 'alexekdahl/tmux-compile'
 ```
 
-Then press `prefix + I` to install the plugin.
+Reload TPM with `<prefix> + I` to fetch and install the plugin.
 
-### Manual Installation
+### Manual installation
 
-Clone the repository into your tmux plugins directory:
+Clone the repository into your tmux plugin directory and source it:
 
 ```bash
 git clone https://github.com/alexekdahl/tmux-compile ~/.tmux/plugins/tmux-compile
 ```
 
-Add this line to your `tmux.conf`:
+Then add this to your `tmux.conf`:
 
 ```tmux
-run-shell ~/.tmux/plugins/tmux-comnpile/compile-mode.tmux
+run-shell ~/.tmux/plugins/tmux-compile/compile-mode.tmux
 ```
 
 ## Usage
 
-### Basic Commands
+By default the plugin defines a few keybindings. You can change them under **Configuration**. In the following table `<prefix>` refers to your tmux prefix key (often `C-b`).
 
-- **Open compile pane**: `Ctrl-b` (default)
-- **Recompile**: `Ctrl-r` (default)
-- **Kill compile pane**: `Ctrl-k` (default)
+| Action               | Default keybinding |
+|---------------------|--------------------|
+| Run compile command   | `<prefix> b`       |
+| Re-run last command | `<prefix> r`       |
+| Kill compile pane   | `<prefix> k`       |
+| Open file at error  | `Enter` in copy-mode |
 
-When you trigger the compile command, you'll be prompted to enter a compilation command. Press Enter to execute it.
+When you first trigger the compile pane you will be prompted for a shell command. After execution the command is stored in the history so you can re-run it quickly. While viewing the output in copy-mode, pressing **Enter** on a line that looks like `file:line:col` (or `file:line`) opens that file at the specified location in Neovim. Neovim must be running in another pane for this feature to work.
 
-### Command History
+### Command history
 
-By default, `tmux-compile` stores all compile commands in a single history file:
-Enabling session-aware mode creates one history file per tmux session. Each file is named after the tmux session (for example, $COMPILE_HISTORY_DIR/my-session.history). Use @compile-mode-history-dir to change the directory.
-
-### Error Navigation
-
-When viewing compile output in copy-mode:
-
-- **Open file at error**: `Enter` (default)
-
-If the selected line matches a compiler error format (`file:line:col` or `file:line`), the file will open in Neovim at the specified location. This only works when Neovim is running in the adjacent pane.
+`tmux-compile` writes the commands you run to a history file. By default all sessions share a single file, but you can enable per-session history. With session-aware history enabled, each tmux session has its own file named after the session, stored in the directory given by `@compile-mode-history-dir`.
 
 ## Configuration
 
-Add these options to your `tmux.conf` to customize the plugin:
+All options are set in `tmux.conf` using `set -g`. Example:
 
 ```tmux
-# Change the compile command keybinding
-set -g @compile-mode-key "C-c"
+# Trigger the compile prompt (default: <prefix> b)
+set -g @compile-mode-key "C-b"
 
-# Change the recompile keybinding
-set -g @compile-mode-recompile-key "C-l"
+# Re-run the last compile command (default: <prefix> r)
+set -g @compile-mode-recompile-key "C-r"
 
-# Change the kill pane keybinding
-set -g @compile-mode-kill-key "C-x"
+# Kill the compile pane (default: <prefix> k)
+set -g @compile-mode-kill-key "C-k"
 
-# Set compile pane height
-set -g @compile-mode-height "25%"
+# Height of the compile pane (e.g. 25%, 10 for lines)
+set -g @compile-mode-height "35%"
 
-# Set custom history file location
+# File used to store command history
 set -g @compile-mode-history-file "$HOME/.compile-history"
 
-# Enable history file per session
-set -g @compile-mode-session-history 'on'
+# Enable per-session history (on/off)
+set -g @compile-mode-session-history "off"
 
-# Set custom base directory for history files for history per session
+# Base directory for per-session history files
 set -g @compile-mode-history-dir "$HOME/.compile-history-dir"
 
-# Change the file open keybinding (in copy-mode)
-set -g @compile-mode-open-file-key "o"
+# Key to open files from compiler errors while in copy-mode
+set -g @compile-mode-open-file-key "Enter"
 ```
 
-## Requirements
+## Error navigation
 
-- tmux 2.0 or later
-- Neovim (for error navigation feature)
-- bash
+When viewing the compile output in copy-mode, move the cursor to a line containing a compiler error (formatted as `path/to/file:line:col` or `path/to/file:line`) and press the key configured via `@compile-mode-open-file-key`. `tmux-compile` extracts the file path and line number and opens that location in Neovim. Make sure Neovim is running in another tmux pane so it can receive the command.
+
+## Contributing & development
+
+Contributions are welcome! Feel free to open issues or pull requests on GitHub if you find bugs or have ideas for improvements. To hack on the plugin locally, clone the repository and source the script from your `tmux.conf`. There are no external dependencies besides tmux and bash. Keeping your changes simple and well-documented will make it easier to review and merge.
 
 ## License
 
-MIT License - see LICENSE file for details
+`tmux-compile` is distributed under the MIT License. See the LICENSE file for details.
