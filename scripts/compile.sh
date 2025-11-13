@@ -7,7 +7,10 @@
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 height="${TMUX_COMPILE_HEIGHT:-30%}"
-history_file="$("$CURRENT_DIR/get-history-file.sh")"
+history_file="${TMUX_COMPILE_HISTORY:-$HOME/.tmux-compile-history}"
+
+# Ensure history exists
+touch "$history_file"
 
 # Get last command
 last_cmd=$(tail -n 1 "$history_file" 2>/dev/null || echo "")
