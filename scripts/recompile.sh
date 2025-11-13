@@ -7,7 +7,7 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-history_file="${TMUX_COMPILE_HISTORY:-$HOME/.tmux-compile-history}"
+history_file="$("$CURRENT_DIR/get-history-file.sh")"
 
 # Retrieve the most recent command from history
 last_cmd=$(tail -n 1 "$history_file" 2>/dev/null)
