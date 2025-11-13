@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eo pipefail
 
 # This helper is invoked from copy-mode (see compile-mode.tmux) when the user
 # presses Enter.  It attempts to emulate the default behaviour of copying the
