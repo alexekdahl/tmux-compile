@@ -11,6 +11,10 @@
 
 Modern terminal workflows often juggle editors, build scripts and error messages. `tmux-compile` keeps everything together:
 
+<p align="center">
+  <img src="assets/tmux-compile.gif" alt="tmux-compile demo" width="80%"/>
+</p>
+
 - **Stay in tmux** – run compilations without spawning external windows or switching panes manually.
 - **Smart error jumping** – if Neovim is running in an adjacent pane, you can jump directly to the file and line reported by your compiler. No more copying file paths.
 - **Minimal friction** – choose your own keybindings and pane height; history is persisted per session or globally.
