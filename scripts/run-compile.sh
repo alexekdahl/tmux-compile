@@ -36,12 +36,6 @@ fi
 compile_pane=$(tmux list-panes -t "$current_window" -F '#{pane_id} #{@compile-pane}' 2>/dev/null | \
     awk '$2=="compile" {print $1; exit}')
 
-# Kill any existing compile pane to prevent stale output
-if [ -n "$compile_pane" ]; then
-    tmux kill-pane -t "$compile_pane" 2>/dev/null || true
-    sleep 0.05  # Brief pause for tmux to finalize pane cleanup
-fi
-
 # Create a temporary wrapper script to avoid shell escaping complications
 # and to provide consistent formatting across different compile commands
 wrapper=$(mktemp)
@@ -73,10 +67,18 @@ read -r -p "Press Enter to close..."
 WRAPPER_EOF
 chmod +x "$wrapper"
 
-# Split the current window vertically to create the compile pane
-# The pane is spawned with the wrapper script instead of a shell
-new_pane=$(tmux split-window -t "$current_window" -v -l "$height" -c "$current_path" -P -F '#{pane_id}' \
-    "$wrapper '$compile_cmd' '$current_path'; rm -f '$wrapper'" 2>/dev/null)
+new_pane=""
+pane_cmd="$wrapper '$compile_cmd' '$current_path'; rm -f '$wrapper'"
+
+# If compile pane exists, re-run in place
+if [ -n "$compile_pane" ]; then
+    tmux respawn-pane -k -t "$compile_pane" "$pane_cmd" 2>/dev/null
+    new_pane="$compile_pane"
+# Otherwise create a new split
+else
+    new_pane=$(tmux split-window -t "$current_window" -h -l "$height" -c "$current_path" -P -F '#{pane_id}' \
+        "$pane_cmd" 2>/dev/null)
+fi
 
 # Verify the pane was created successfully
 if [ -z "$new_pane" ]; then
