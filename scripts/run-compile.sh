@@ -77,7 +77,7 @@ if [ -n "$compile_pane" ]; then
     new_pane="$compile_pane"
 # Otherwise create a new split
 else
-    new_pane=$(tmux split-window -t "$current_window" -h -l "$height" -c "$current_path" -P -F '#{pane_id}' \
+    new_pane=$(tmux split-window -t "$current_window" -v -l "$height" -c "$current_path" -P -F '#{pane_id}' \
         "$pane_cmd" 2>/dev/null)
 fi
 
